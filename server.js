@@ -9,17 +9,27 @@ const app = express();
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "https://your-frontend-url.com", // Replace with your frontend URL or allow all origins in dev
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "https://staff-schedule-gift-react.onrender.com", // Production URL
+        "http://localhost:3000", // Local development URL
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   })
 );
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: "34.35.53.111",       // Online database host (Google Cloud SQL public IP)
-  user: "app-user",           // MySQL username
+  host: "34.35.53.111", // Online database host (Google Cloud SQL public IP)
+  user: "app-user", // MySQL username
   password: "mthombenigift45@", // MySQL password
   database: "healthcare_management_system", // Database name
-  port: 3306,                 // MySQL port
+  port: 3306, // MySQL port
 });
 
 db.connect((err) => {
